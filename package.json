@@ -1,15 +1,15 @@
 {
-  "name": "storybook-addon-kit",
+  "name": "css-chaos-addon",
   "version": "0.0.0",
-  "description": "everything you need to build a Storybook addon",
+  "description": "An addon that applies inheritable css properties around a component to better test random use cases",
   "keywords": [
     "storybook-addons"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/storybookjs/storybook-addon-kit"
+    "url": "https://github.com/CodeByAlex/css-chaos-addon"
   },
-  "author": "package-author",
+  "author": "CodeByAlex",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
