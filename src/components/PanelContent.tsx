@@ -3,11 +3,16 @@ import { styled, themes, convert } from "@storybook/theming";
 import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
 
+
+const randomizePropValues = () => {
+  console.log('randomizePropValues')
+}
+
 export const PanelContent = () => (
   <div style={{ margin: '16px'}}>
-    <Button primary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right'}}>Randomize!</Button>
+    <Button primary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right'}} onClick={randomizePropValues}>Randomize!</Button>
     <div>
-      {CSS_PROPS.map(obj => {
+      {CSS_PROPS.sort((a, b) => a.name.localeCompare(b.name)).map(obj => {
         const propName = obj.name;
         const propDesc = obj.description;
         const propOptions: String[] = obj.values;
