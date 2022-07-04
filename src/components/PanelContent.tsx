@@ -8,12 +8,18 @@ const getForm = () => {
   return document.querySelector("form");
 }
 
+const updateForm = (event: any) => {
+  console.log(event)
+  //change the existing css var for property type
+}
+
 const randomizePropValues = () => {
   const formElement = getForm();
   for (const el of Array.from(formElement.elements)) {
     const options = el.children;
     const random = Math.floor(Math.random() * options.length);
     (el as any).value = (options[random] as any).value;
+    //change the existing css var for property type
   }
 }
 
@@ -32,7 +38,7 @@ export const PanelContent = () => (
             <h3>Name: {propName}</h3>
             <div>Description: {propDesc}</div>
             {propOptions ?
-              <Form.Select style={{ marginTop: '8px' }} defaultValue={propDefaultValue}>
+              <Form.Select style={{ marginTop: '8px' }} defaultValue={propDefaultValue} onChange={updateForm}>
                 {propOptions.map((value) => {
                   return (
                     <option>{value}</option>
