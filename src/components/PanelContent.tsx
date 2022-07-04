@@ -4,12 +4,16 @@ import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
 
 
+const getForm = () => {
+  return document.querySelector("form");
+}
+
 const randomizePropValues = () => {
-  const formElement = document.querySelector("form");
-  for(const el of Array.from(formElement.elements)) {
-    const options = el.children;  
-    const random  = Math.floor(Math.random() * options.length);
-    (el as any).value = (options[random] as any).value; 
+  const formElement = getForm();
+  for (const el of Array.from(formElement.elements)) {
+    const options = el.children;
+    const random = Math.floor(Math.random() * options.length);
+    (el as any).value = (options[random] as any).value;
   }
 }
 
@@ -29,9 +33,9 @@ export const PanelContent = () => (
             <div>Description: {propDesc}</div>
             {propOptions ?
               <Form.Select style={{ marginTop: '8px' }} defaultValue={propDefaultValue}>
-                {propOptions.map(function (a) {
+                {propOptions.map((value) => {
                   return (
-                    <option>{a}</option>
+                    <option>{value}</option>
                   );
                 })}
               </Form.Select>
