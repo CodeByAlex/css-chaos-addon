@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "description": "An addon that applies inheritable css properties around a component to better test random use cases",
   "keywords": [
-    "storybook-addons", "css", "storybook-addons"
+    "storybook-addons",
+    "css",
+    "storybook-addons"
   ],
   "repository": {
     "type": "git",
@@ -81,7 +83,15 @@
   "storybook": {
     "displayName": "CSS Chaos Addon",
     "supportedFrameworks": [
-      "react", "vue", "angular", "web-components", "ember", "html", "svelte", "preact", "react-native"
+      "react",
+      "vue",
+      "angular",
+      "web-components",
+      "ember",
+      "html",
+      "svelte",
+      "preact",
+      "react-native"
     ],
     "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
   }
