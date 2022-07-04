@@ -18,11 +18,11 @@ export const PanelContent = () => (
         const propOptions: String[] = obj.values;
         const propDefaultValue = obj.default;
 
-        return <div>
+        return <div style={{ marginBottom: '16px'}}>
           <h3>Name: {propName}</h3>
           <div>Description: {propDesc}</div>
           {propOptions ?
-            <Form.Select defaultValue={propDefaultValue}>
+            <Form.Select style={{ marginTop: '8px'}} defaultValue={propDefaultValue}>
               {propOptions.map(function (a) {
                 return (
                   <option>{a}</option>
@@ -31,8 +31,6 @@ export const PanelContent = () => (
             </Form.Select>
             : null
           }
-          <br />
-          <br />
         </div>
       })}
     </div>
