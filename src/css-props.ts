@@ -165,7 +165,9 @@ export const CSS_PROPS = [
             "Arial",
             "Times New Roman",
             "Verdana",
-            "cursive"
+            "cursive",
+            "initial",
+            "inherit"
         ]
     },
     {
