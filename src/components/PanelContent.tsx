@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { styled, themes, convert } from "@storybook/theming";
-import { TabsState, Placeholder, Button } from "@storybook/components";
+import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
 
 export const PanelContent = () => (
@@ -12,20 +12,24 @@ export const PanelContent = () => (
       const propDefaultValue = obj.default;
 
       return <div>
-        <div>Property Name: {propName}</div>
+        <h3>Property Name: {propName}</h3>
         <div>Property Description: {propDesc}</div>
         <div>Property Default Value: {propDefaultValue}</div>
         {propOptions ?
-          <ul>
-            {propOptions.map(function (a) {
+          <Form.Select>
+           {propOptions.map(function (a) {
               return (
-                <li>{a}</li>
+                <option>{a}</option>
               );
             })}
-          </ul> : null
+          </Form.Select>
+          : null
         }
+        <br />
         <br />
       </div>
     })}
   </div>
 );
+
+// Form usage: https://github.com/storybookjs/storybook/blob/main/lib/components/src/form/form.stories.tsx
