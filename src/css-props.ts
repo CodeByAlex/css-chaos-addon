@@ -1,24 +1,5 @@
 export const CSS_PROPS = [
     {
-        "name": "azimuth",
-        "description": "The position of a sound source along the horizontal axis of the listener's environment.",
-        "default": "",
-        "values": [
-            "angle",
-            "left-side",
-            "far-left",
-            "left",
-            "center-left",
-            "center",
-            "center-right",
-            "right",
-            "far-right",
-            "right-side",
-            "far-right",
-            "behind center"
-        ]
-    },
-    {
         "name": "border-collapse",
         "description": "Sets whether table borders should collapse into a single border or be separated as in standard HTML.",
         "default": "separate",
@@ -130,19 +111,6 @@ export const CSS_PROPS = [
             "ltr",
             "rtl",
             "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "elevation",
-        "description": "A spacial audio setting for aural content presentation that is used to specify the vertical direction a sound is coming from.",
-        "default": "level",
-        "values": [
-            "below",
-            "level",
-            "above",
-            "higher",
-            "lower",
             "inherit"
         ]
     },
@@ -316,35 +284,6 @@ export const CSS_PROPS = [
         ]
     },
     {
-        "name": "pitch-range",
-        "description": "Defines the amount of variation permitted in the pitch of spoken text.",
-        "default": "",
-        "values": [
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90",
-            "100"
-        ]
-    },
-    {
-        "name": "pitch",
-        "description": "Specifies the average pitch of the speaking voice used to render spoken text.",
-        "default": "medium",
-        "values": [
-            "x-low",
-            "low",
-            "medium",
-            "high",
-            "x-high"
-        ]
-    },
-    {
         "name": "quotes",
         "description": "Sets the type of quotation marks for quotations.",
         "default": "\"",
@@ -362,95 +301,6 @@ export const CSS_PROPS = [
             "„",
             "none",
             "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "richness",
-        "description": "specifies the richness, or brightness, of the speaking voice. Higher values of richness/brightness have rougher waveforms and tend to carry better than lower richness values with smoother waveforms.",
-        "default": "initial",
-        "values": [
-            "0",
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90",
-            "100",
-            "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "speak-header",
-        "description": "Used in aural media to specify whether table headers are spoken before each cell, or only before each cell if that cell uses a different header to the previous cell.",
-        "default": "once",
-        "values": [
-            "once",
-            "always",
-            "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "speak-numeral",
-        "description": "Used in aural media to specify how to speak numerals (numbers).",
-        "default": "digits",
-        "values": [
-            "digits",
-            "continuous",
-            "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "speak-punctuation",
-        "description": "Used in aural media to specify how punctuation (i.e. comma) should be spoken.",
-        "default": "none",
-        "values": [
-            "code",
-            "none",
-            "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "speech-rate",
-        "description": "Used to declare the rate at which text is spoken.",
-        "default": "inherit",
-        "values": [
-            "number",
-            "x-slow",
-            "slow",
-            "medium",
-            "fast",
-            "x-fast",
-            "faster",
-            "slower",
-            "initial",
-            "inherit"
-        ]
-    },
-    {
-        "name": "stress",
-        "description": "Specifies the amount of inflection which is used to speak stress markers in a language.",
-        "default": "inherit",
-        "values": [
-            "0",
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90",
-            "100",
             "inherit"
         ]
     },
@@ -505,24 +355,6 @@ export const CSS_PROPS = [
             "collapse",
             "initial",
             "inherit"
-        ]
-    },
-    {
-        "name": "volume",
-        "description": "Specifies the current volume of the audio/video",
-        "default": "1.0",
-        "values": [
-            "0.0",
-            "0.1",
-            "0.2",
-            "0.3",
-            "0.4",
-            "0.5",
-            "0.6",
-            "0.7",
-            "0.8",
-            "0.9",
-            "1.0"
         ]
     },
     {
