@@ -7,7 +7,7 @@ Run `npm install css-chaos-addon`
 
 In your main.js file, add to the addons array:
 ```
-addons: ["css-chaos-addon],
+addons: ["css-chaos-addon"]
 ```
 
 ### Development scripts
