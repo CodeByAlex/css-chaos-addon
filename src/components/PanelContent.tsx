@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { styled, themes, convert } from "@storybook/theming";
 import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
-
+import { addons } from '@storybook/addons';
 
 const getIframeDoc = () => {
   const iframe = document.querySelector<HTMLIFrameElement>(
@@ -19,8 +19,8 @@ const setBaseCSS = () => {
   const iframeDoc = getIframeDoc();
   if (iframeDoc && CSS_PROPS) {
 
-    let propertyCss =``;
-    for(const prop of CSS_PROPS) {
+    let propertyCss = ``;
+    for (const prop of CSS_PROPS) {
       propertyCss += `${prop.name}: var(--${prop.name});`;
     }
     const css = `body { ${propertyCss} }`;
@@ -43,14 +43,11 @@ const updateCSSProps = (propObj: any) => {
     const root = iframeDoc.documentElement;
     if (root) {
       root.style.setProperty(`--${propObj.name}`, propObj.value);
-      console.log('set', `--${propObj.name}`)
     }
-    console.log(root.style)
   }
 }
 
 const formUpdated = (event: any) => {
-  console.log(event)
   //change the existing css var for property type
   updateCSSProps({ name: event.target.id, value: event.target.value } as any);
 
@@ -64,6 +61,16 @@ const randomizePropValues = () => {
     (el as any).value = (options[random] as any).value;
     //change the existing css var for property type
     updateCSSProps({ name: el.id, value: (options[random] as any).value } as any);
+  }
+}
+
+const resetPropValues = () => {
+  const formElement = getForm();
+  for (const el of Array.from(formElement.elements)) {
+    //change the existing css var for property type
+    const propObj: any = CSS_PROPS.filter(obj => obj.name === el.id)[0];
+    (el as any).value = propObj.default;
+    updateCSSProps({ name: el.id, value: propObj.default } as any);
   }
 }
 
@@ -81,6 +88,7 @@ export const PanelContent = () => {
   return (
     <div style={{ margin: '16px' }}>
       <Button primary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }} onClick={randomizePropValues}>Randomize!</Button>
+      <Button secondary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right', marginRight: '4px' }} onClick={resetPropValues}>Reset</Button>
       <form>
         <div>
           {CSS_PROPS.sort((a, b) => a.name.localeCompare(b.name)).map(obj => {
@@ -109,5 +117,3 @@ export const PanelContent = () => {
     </div>
   )
 };
-
-// Form usage: https://github.com/storybookjs/storybook/blob/main/lib/components/src/form/form.stories.tsx
