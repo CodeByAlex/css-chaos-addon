@@ -15,6 +15,28 @@ const getForm = () => {
   return document.querySelector("form");
 }
 
+const setBaseCSS = () => {
+  const iframeDoc = getIframeDoc();
+  if (iframeDoc && CSS_PROPS) {
+
+    let propertyCss =``;
+    for(const prop of CSS_PROPS) {
+      propertyCss += `${prop.name}: var(--${prop.name});`;
+    }
+    const css = `body { ${propertyCss} }`;
+    const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
+    const style: any = iframeDoc.createElement('style');
+    style.type = 'text/css';
+    if (style.styleSheet) {
+      // This is required for IE8 and below.
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+    head.appendChild(style);
+  }
+}
+
 const updateCSSProps = (propObj: any) => {
   const iframeDoc = getIframeDoc();
   if (iframeDoc && propObj) {
@@ -54,6 +76,7 @@ const initCSSProps = () => {
 }
 
 export const PanelContent = () => {
+  setBaseCSS()
   initCSSProps()
   return (
     <div style={{ margin: '16px' }}>
