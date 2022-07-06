@@ -24,12 +24,18 @@ const copyCSS = () => {
   let css = '';
   if (currentCSSPropMap) {
     for (const [key, value] of currentCSSPropMap as any) {
-      console.log(key, value); // 👉️ country Chile, age 30
       css += `
       ${key}: ${value}`
     }
   }
   navigator.clipboard.writeText(css);
+  const copyButton = document.getElementById('copy-button');
+  if(copyButton) {
+    copyButton.innerHTML = "Copied!";
+    setTimeout ( ()=>{
+      copyButton.innerHTML = "Copy CSS";
+    }, 500 );
+  }
 }
 
 const getCSSProps = () => {
@@ -168,7 +174,7 @@ export const PanelContent = () => {
           })}
         </div>
       </form>
-      <Button tertiary small style={{ marginRight: '-16px', bottom: 0, position:'sticky', zIndex: 100, float: 'right'}} onClick={copyCSS}>Copy</Button>
+      <Button id="copy-button" tertiary small style={{ marginRight: '-16px', bottom: 0, position:'sticky', zIndex: 100, float: 'right'}} onClick={copyCSS}>Copy CSS</Button>
     </div>
   )
 };
