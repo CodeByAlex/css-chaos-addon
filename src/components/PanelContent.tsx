@@ -43,10 +43,10 @@ const getCSSProps = () => {
       globalCssProps = [
         ...newProps,
         ...CSS_PROPS
-      ];
+      ].filter(obj => obj.values.length);
     }
   } else {
-    globalCssProps = CSS_PROPS;
+    globalCssProps = CSS_PROPS.filter(obj => obj.values.length);
   }
 }
 

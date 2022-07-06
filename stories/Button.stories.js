@@ -24,6 +24,10 @@ export default {
           "world"
         ]
       },
+      {
+        "name": "direction",
+        "values": []
+      },
     ]
     ,
   },
