@@ -11,4 +11,3 @@
 import { withGlobals } from "../withGlobals";
 
 export const decorators = [withGlobals];
-console.log('hello world')

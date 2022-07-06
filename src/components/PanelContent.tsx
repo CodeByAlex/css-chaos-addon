@@ -6,7 +6,7 @@ import { addons } from '@storybook/addons';
 import { useParameter } from "@storybook/api";
 import { PARAM_KEY } from "../constants";
 
-let globalCssProps: any [] = [];
+let globalCssProps: any[] = [];
 
 const getIframeDoc = () => {
   const iframe = document.querySelector<HTMLIFrameElement>(
