@@ -3,6 +3,10 @@ import { styled, themes, convert } from "@storybook/theming";
 import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
 import { addons } from '@storybook/addons';
+import { useParameter } from "@storybook/api";
+import { PARAM_KEY } from "../constants";
+
+let globalCssProps: any [] = [];
 
 const getIframeDoc = () => {
   const iframe = document.querySelector<HTMLIFrameElement>(
@@ -15,25 +19,57 @@ const getForm = () => {
   return document.querySelector("form");
 }
 
-const setBaseCSS = () => {
-  const iframeDoc = getIframeDoc();
-  if (iframeDoc && CSS_PROPS) {
+const getCSSProps = () => {
+  const paramData: any[] = useParameter(PARAM_KEY, null);
+  const propnames: string[] = [];
+  if (paramData) {
+    for (const data of paramData) {
+      if (data.name && CSS_PROPS.filter(obj => obj.name === data.name)[0]) {
+        if (data.values) {
+          CSS_PROPS.filter(obj => obj.name === data.name)[0].values = data.values;
+        }
+        if (data.description) {
+          CSS_PROPS.filter(obj => obj.name === data.name)[0].description = data.description;
+        }
+        if (data.default) {
+          CSS_PROPS.filter(obj => obj.name === data.name)[0].default = data.default;
+        }
+        propnames.push(data.name);
+      }
+    }
+    if (paramData.filter(obj => !propnames.includes(obj.name))) {
+      globalCssProps = [
+        ...paramData.filter(obj => !propnames.includes(obj.name)),
+        ...CSS_PROPS
+      ];
+    }
+  } else {
+    globalCssProps = CSS_PROPS;
+  }
+}
 
+const setBaseCSS = (cssprops: any[]) => {
+  const iframeDoc = getIframeDoc();
+  if (iframeDoc && cssprops) {
     let propertyCss = ``;
-    for (const prop of CSS_PROPS) {
+    for (const prop of cssprops) {
       propertyCss += `${prop.name}: var(--${prop.name});`;
     }
     const css = `body { ${propertyCss} }`;
     const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
     const style: any = iframeDoc.createElement('style');
-    style.type = 'text/css';
-    if (style.styleSheet) {
-      // This is required for IE8 and below.
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
+    if (style) {
+      style.type = 'text/css';
+      if (style.styleSheet) {
+        // This is required for IE8 and below.
+        style.styleSheet.cssText = css;
+      } else {
+        style.appendChild(document.createTextNode(css));
+      }
     }
-    head.appendChild(style);
+    if (head && style) {
+      head.appendChild(style);
+    }
   }
 }
 
@@ -68,14 +104,14 @@ const resetPropValues = () => {
   const formElement = getForm();
   for (const el of Array.from(formElement.elements)) {
     //change the existing css var for property type
-    const propObj: any = CSS_PROPS.filter(obj => obj.name === el.id)[0];
+    const propObj: any = globalCssProps.filter(obj => obj.name === el.id)[0];
     (el as any).value = propObj.default;
     updateCSSProps({ name: el.id, value: propObj.default } as any);
   }
 }
 
-const initCSSProps = () => {
-  CSS_PROPS.forEach((obj) => {
+const initCSSProps = (cssprops: any[]) => {
+  cssprops.forEach((obj) => {
     if (obj && obj.name && obj.default) {
       updateCSSProps({ name: obj.name, value: obj.default } as any);
     }
@@ -83,15 +119,16 @@ const initCSSProps = () => {
 }
 
 export const PanelContent = () => {
-  setBaseCSS()
-  initCSSProps()
+  getCSSProps();
+  setBaseCSS(globalCssProps)
+  initCSSProps(globalCssProps)
   return (
     <div style={{ margin: '16px' }}>
       <Button primary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }} onClick={randomizePropValues}>Randomize!</Button>
-      <Button secondary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right', marginRight: '4px' }} onClick={resetPropValues}>Reset</Button>
+      <Button secondary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right', marginRight: '8px' }} onClick={resetPropValues}>Reset</Button>
       <form>
         <div>
-          {CSS_PROPS.sort((a, b) => a.name.localeCompare(b.name)).map(obj => {
+          {globalCssProps.sort((a, b) => a.name.localeCompare(b.name)).map(obj => {
             const propName = obj.name;
             const propDesc = obj.description;
             const propOptions: String[] = obj.values;

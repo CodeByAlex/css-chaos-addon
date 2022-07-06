@@ -5,11 +5,27 @@ export default {
   title: "Example/Button",
   component: Button,
   parameters: {
-    myAddonParameter: `
-<MyComponent boolProp scalarProp={1} complexProp={{ foo: 1, bar: '2' }}>
-  <SomeOtherComponent funcProp={(a) => a.id} />
-</MyComponent>
-`,
+    cssPropertyData: [
+      {
+        "name": "hello world",
+        "description": "Lorem ipsum",
+        "default": "world",
+        "values": [
+          "hello",
+          "world"
+        ]
+      },
+      {
+        "name": "caption-side",
+        "description": "Specifies the placement of a table caption. Overwritten",
+        "default": "hello",
+        "values": [
+          "hello",
+          "world"
+        ]
+      },
+    ]
+    ,
   },
 };
 
