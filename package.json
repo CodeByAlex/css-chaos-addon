@@ -4,8 +4,16 @@
   "description": "An addon that applies inheritable css properties around a component to better test random use cases",
   "keywords": [
     "storybook-addons",
+    "storybook",
+    "addon",
     "css",
-    "testing"
+    "testing",
+    "style",
+    "bleeding",
+    "inherit",
+    "inheritable",
+    "css properties",
+    "properties"
   ],
   "repository": {
     "type": "git",
