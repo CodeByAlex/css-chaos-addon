@@ -24,22 +24,24 @@ const getCSSProps = () => {
   const propnames: string[] = [];
   if (paramData) {
     for (const data of paramData) {
-      if (data.name && CSS_PROPS.filter(obj => obj.name === data.name)[0]) {
+      const filteredItem = CSS_PROPS.filter(obj => obj.name === data.name)[0];
+      if (data.name && filteredItem) {
         if (data.values) {
-          CSS_PROPS.filter(obj => obj.name === data.name)[0].values = data.values;
+          filteredItem.values = data.values;
         }
         if (data.description) {
-          CSS_PROPS.filter(obj => obj.name === data.name)[0].description = data.description;
+          filteredItem.description = data.description;
         }
         if (data.default) {
-          CSS_PROPS.filter(obj => obj.name === data.name)[0].default = data.default;
+          filteredItem.default = data.default;
         }
         propnames.push(data.name);
       }
     }
-    if (paramData.filter(obj => !propnames.includes(obj.name))) {
+    const newProps = paramData.filter(obj => !propnames.includes(obj.name));
+    if (newProps) {
       globalCssProps = [
-        ...paramData.filter(obj => !propnames.includes(obj.name)),
+        ...newProps,
         ...CSS_PROPS
       ];
     }
