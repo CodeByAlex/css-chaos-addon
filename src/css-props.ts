@@ -128,7 +128,7 @@ export const CSS_PROPS = [
     {
         "name": "font-family",
         "description": "Specifies the font for an element.",
-        "default": "",
+        "default": "inherit",
         "values": [
             "Arial",
             "Times New Roman",

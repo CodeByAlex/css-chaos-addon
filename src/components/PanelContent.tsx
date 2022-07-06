@@ -7,6 +7,7 @@ import { useParameter } from "@storybook/api";
 import { PARAM_KEY } from "../constants";
 
 let globalCssProps: any[] = [];
+let currentCSSPropMap: Map<String, any> = new Map();
 
 const getIframeDoc = () => {
   const iframe = document.querySelector<HTMLIFrameElement>(
@@ -17,6 +18,18 @@ const getIframeDoc = () => {
 
 const getForm = () => {
   return document.querySelector("form");
+}
+
+const copyCSS = () => {
+  let css = '';
+  if (currentCSSPropMap) {
+    for (const [key, value] of currentCSSPropMap as any) {
+      console.log(key, value); // 👉️ country Chile, age 30
+      css += `
+      ${key}: ${value}`
+    }
+  }
+  navigator.clipboard.writeText(css);
 }
 
 const getCSSProps = () => {
@@ -55,7 +68,7 @@ const setBaseCSS = (cssprops: any[]) => {
   if (iframeDoc && cssprops) {
     let propertyCss = ``;
     for (const prop of cssprops) {
-      propertyCss += `${prop.name}: var(--${prop.name});`;
+      propertyCss += `${prop.name}: var(--sb-chaos-${prop.name});`;
     }
     const css = `body { ${propertyCss} }`;
     const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
@@ -80,7 +93,8 @@ const updateCSSProps = (propObj: any) => {
   if (iframeDoc && propObj) {
     const root = iframeDoc.documentElement;
     if (root) {
-      root.style.setProperty(`--${propObj.name}`, propObj.value);
+      root.style.setProperty(`--sb-chaos-${propObj.name}`, propObj.value);
+      currentCSSPropMap.set(propObj.name, propObj.value);
     }
   }
 }
@@ -88,7 +102,6 @@ const updateCSSProps = (propObj: any) => {
 const formUpdated = (event: any) => {
   //change the existing css var for property type
   updateCSSProps({ name: event.target.id, value: event.target.value } as any);
-
 }
 
 const randomizePropValues = () => {
@@ -126,8 +139,10 @@ export const PanelContent = () => {
   initCSSProps(globalCssProps)
   return (
     <div style={{ margin: '16px' }}>
-      <Button primary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }} onClick={randomizePropValues}>Randomize!</Button>
-      <Button secondary small style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right', marginRight: '8px' }} onClick={resetPropValues}>Reset</Button>
+      <div style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }}>
+        <Button secondary small style={{ marginRight: '8px' }} onClick={resetPropValues}>Reset</Button>
+        <Button primary small onClick={randomizePropValues}>Randomize!</Button>
+      </div>
       <form>
         <div>
           {globalCssProps.sort((a, b) => a.name.localeCompare(b.name)).map(obj => {
@@ -153,6 +168,7 @@ export const PanelContent = () => {
           })}
         </div>
       </form>
+      <Button tertiary small style={{ marginRight: '-16px', bottom: 0, position:'sticky', zIndex: 100, float: 'right'}} onClick={copyCSS}>Copy</Button>
     </div>
   )
 };
