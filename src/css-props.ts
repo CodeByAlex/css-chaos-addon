@@ -236,6 +236,7 @@ export const CSS_PROPS = [
             "inherit"
         ]
     },
+    //  need to have mock images set up
     // {
     //     "name": "list-style-image",
     //     "description": "Replaces the list-item marker with an image.",
@@ -283,27 +284,28 @@ export const CSS_PROPS = [
             "inherit"
         ]
     },
-    {
-        "name": "quotes",
-        "description": "Sets the type of quotation marks for quotations.",
-        "default": "\"",
-        "values": [
-            "\"",
-            "'",
-            "‹",
-            "›",
-            "«",
-            "»",
-            "‘",
-            "’",
-            "“",
-            "”",
-            "„",
-            "none",
-            "initial",
-            "inherit"
-        ]
-    },
+    // doesnt work unless they are doubled up - need to refactor a bit to get that to work
+    // {
+    //     "name": "quotes",
+    //     "description": "Sets the type of quotation marks for quotations.",
+    //     "default": "\"",
+    //     "values": [
+    //         "\"",
+    //         "'",
+    //         "‹",
+    //         "›",
+    //         "«",
+    //         "»",
+    //         "‘",
+    //         "’",
+    //         "“",
+    //         "”",
+    //         "„",
+    //         "none",
+    //         "initial",
+    //         "inherit"
+    //     ]
+    // },
     {
         "name": "text-align",
         "description": "Specifies the horizontal alignment of text in an element.",

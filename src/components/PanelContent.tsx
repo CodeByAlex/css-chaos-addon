@@ -25,7 +25,7 @@ const copyCSS = () => {
   if (currentCSSPropMap) {
     for (const [key, value] of currentCSSPropMap as any) {
       css += `
-      ${key}: ${value}`
+      ${key}: ${value};`
     }
   }
   navigator.clipboard.writeText(css);
