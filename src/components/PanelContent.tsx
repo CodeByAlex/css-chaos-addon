@@ -5,9 +5,11 @@ import { CSS_PROPS } from '../css-props';
 import { addons } from '@storybook/addons';
 import { useParameter } from "@storybook/api";
 import { PARAM_KEY } from "../constants";
+import { STORY_CHANGED, SELECT_STORY } from '@storybook/core-events';
 
 let globalCssProps: any[] = [];
 let currentCSSPropMap: Map<String, any> = new Map();
+let maxVariance: number = null;
 
 const getIframeDoc = () => {
   const iframe = document.querySelector<HTMLIFrameElement>(
@@ -30,16 +32,20 @@ const copyCSS = () => {
   }
   navigator.clipboard.writeText(css);
   const copyButton = document.getElementById('copy-button');
-  if(copyButton) {
+  if (copyButton) {
     copyButton.innerHTML = "Copied!";
-    setTimeout ( ()=>{
+    setTimeout(() => {
       copyButton.innerHTML = "Copy CSS";
-    }, 500 );
+    }, 500);
   }
 }
 
+const setMaxVariance = () => {
+  maxVariance = useParameter(PARAM_KEY, null) ? useParameter(PARAM_KEY, null).maxVariance : null;
+}
+
 const getCSSProps = () => {
-  const paramData: any[] = useParameter(PARAM_KEY, null);
+  const paramData: any[] = useParameter(PARAM_KEY, null) ? useParameter(PARAM_KEY, null).propertyData : [];
   const propnames: string[] = [];
   if (paramData) {
     for (const data of paramData) {
@@ -108,26 +114,63 @@ const updateCSSProps = (propObj: any) => {
 const formUpdated = (event: any) => {
   //change the existing css var for property type
   updateCSSProps({ name: event.target.id, value: event.target.value } as any);
+  setPointer(event.target.id, event.target.value);
+}
+
+const setPointer = (propName: string, propValue: any): any => {
+  const prop = globalCssProps.filter(obj => propName === obj.name)[0];
+  const starEl = document.getElementById(`${propName}-star`);
+  if (starEl) {
+    starEl.remove();
+  }
+  if (prop.default != propValue) {
+    const dropdownEl = document.getElementById(propName)
+    const starEl = document.createElement("span");
+    starEl.id = `${propName}-star`;
+    starEl.innerHTML = "&#10042;";
+    starEl.style.color = "#FF4785";
+    starEl.style.fontSize = "15px";
+    starEl.style.marginTop = "14px";
+    starEl.style.marginLeft = "14px";
+    dropdownEl.parentNode.insertBefore(starEl, dropdownEl.nextSibling);
+  }
+}
+
+const shuffleArray = (arr: any[]) => {
+  return arr
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
 }
 
 const randomizePropValues = () => {
   const formElement = getForm();
-  for (const el of Array.from(formElement.elements)) {
-    const options = el.children;
-    const random = Math.floor(Math.random() * options.length);
-    (el as any).value = (options[random] as any).value;
-    //change the existing css var for property type
-    updateCSSProps({ name: el.id, value: (options[random] as any).value } as any);
+  const varianceVal = maxVariance ? maxVariance : Array.from(formElement.elements).length;
+  let index = 0;
+  resetPropValues();
+  for (let el of shuffleArray(Array.from(formElement.elements))) {
+    if (index < varianceVal) {
+      const options = el.children;
+      const random = Math.floor(Math.random() * options.length);
+      (el as any).value = (options[random] as any).value;
+      //change the existing css var for property type
+      updateCSSProps({ name: el.id, value: (options[random] as any).value } as any);
+      setPointer(el.id, (options[random] as any).value);
+    } else {
+      break;
+    }
+    index++;
   }
 }
 
 const resetPropValues = () => {
   const formElement = getForm();
   for (const el of Array.from(formElement.elements)) {
-    //change the existing css var for property type
     const propObj: any = globalCssProps.filter(obj => obj.name === el.id)[0];
     (el as any).value = propObj.default;
+    //change the existing css var for property type
     updateCSSProps({ name: el.id, value: propObj.default } as any);
+    setPointer(el.id, propObj.default);
   }
 }
 
@@ -139,10 +182,20 @@ const initCSSProps = (cssprops: any[]) => {
   })
 }
 
+const setupChannelEvents = () => {
+  const channel = addons.getChannel();
+  channel.on(STORY_CHANGED, () => {
+    resetPropValues();
+  })
+}
+
+
 export const PanelContent = () => {
   getCSSProps();
   setBaseCSS(globalCssProps)
   initCSSProps(globalCssProps)
+  setupChannelEvents();
+  setMaxVariance();
   return (
     <div style={{ margin: '16px' }}>
       <div style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }}>
@@ -160,21 +213,23 @@ export const PanelContent = () => {
             return <div style={{ marginBottom: '16px' }}>
               <h3>Name: {propName}</h3>
               <div>Description: {propDesc}</div>
-              {propOptions ?
-                <Form.Select id={propName} style={{ marginTop: '8px' }} defaultValue={propDefaultValue} onChange={formUpdated}>
-                  {propOptions.map((value) => {
-                    return (
-                      <option>{value}</option>
-                    );
-                  })}
-                </Form.Select>
-                : null
-              }
+              <div style={{ display: 'flex' }}>
+                {propOptions ?
+                  <Form.Select id={propName} style={{ marginTop: '8px' }} defaultValue={propDefaultValue} onChange={formUpdated}>
+                    {propOptions.map((value) => {
+                      return (
+                        <option>{value}</option>
+                      );
+                    })}
+                  </Form.Select>
+                  : null
+                }
+              </div>
             </div>
           })}
         </div>
       </form>
-      <Button id="copy-button" tertiary small style={{ marginRight: '-16px', bottom: 0, position:'sticky', zIndex: 100, float: 'right'}} onClick={copyCSS}>Copy CSS</Button>
+      <Button id="copy-button" tertiary small style={{ marginRight: '-16px', bottom: 0, position: 'sticky', zIndex: 100, float: 'right' }} onClick={copyCSS}>Copy CSS</Button>
     </div>
   )
 };

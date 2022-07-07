@@ -5,30 +5,34 @@ export default {
   title: "Example/Button",
   component: Button,
   parameters: {
-    cssPropertyData: [
-      {
-        "name": "hello world",
-        "description": "Lorem ipsum",
-        "default": "world",
-        "values": [
-          "hello",
-          "world"
+    cssChaos: {
+      maxVariance: 5,
+      propertyData:
+        [
+          {
+            "name": "hello world",
+            "description": "Lorem ipsum",
+            "default": "world",
+            "values": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "name": "caption-side",
+            "description": "Specifies the placement of a table caption. Overwritten",
+            "default": "hello",
+            "values": [
+              "hello",
+              "world"
+            ]
+          },
+          {
+            "name": "direction",
+            "values": []
+          },
         ]
-      },
-      {
-        "name": "caption-side",
-        "description": "Specifies the placement of a table caption. Overwritten",
-        "default": "hello",
-        "values": [
-          "hello",
-          "world"
-        ]
-      },
-      {
-        "name": "direction",
-        "values": []
-      },
-    ]
+    }
     ,
   },
 };

@@ -59,55 +59,75 @@ The CSS Property keys include:
 
 If you want to add a css property:
 ```
- parameters: {
-    cssPropertyData: [
-      {
-        "name": "hello world",
-        "description": "Lorem ipsum",
-        "default": "world",
-        "values": [
-          "hello",
-          "world"
+parameters: {
+    cssChaos: {
+      propertyData:
+        [
+            {
+                "name": "hello world",
+                "description": "Lorem ipsum",
+                "default": "world",
+                "values": [
+                    "hello",
+                    "world"
+                ]
+            }
         ]
-      },
-    ]
-    ,
-  }
+    }
+};
 ```
 
 If you want to alter a css property, update one or all keys in the object (name, description, default, values):
 ```
- parameters: {
-    cssPropertyData: [
-      {
-        "name": "updated-name",
-        "description": "An updated description goes here",
-        "default": "new default",
-        "values": [
-          "this",
-          "includes",
-          "updated",
-          "values",
-          "new default"
+parameters: {
+    cssChaos: {
+      propertyData:
+        [
+            {
+                "name": "updated-name",
+                "description": "An updated description goes here",
+                "default": "new default",
+                "values": [
+                    "this",
+                    "includes",
+                    "updated",
+                    "values",
+                    "new default"
+                ]
+            }
         ]
-      },
-    ]
-    ,
-  }
+    }
+};
 ```
 
 To remove an existing css property dropdown from the addon panel, remove all of the values from the object:
 ```
- parameters: {
-    cssPropertyData: [
-      {
-        "name": "color",
-        "values": []
-      },
-    ]
-    ,
-  }
+parameters: {
+    cssChaos: {
+      propertyData:
+        [
+            {
+                "name": "color",
+                "values": []
+            }
+        ]
+    }
+};
 ```
+
+## Setting Max Variance
+
+If you would like to limit the amount of variance when the "Randomize!" button is clicked, you can set a value called `maxVariance`. If you set the max variance, it will only randomize the number of properties you set. If you do not set a max variance, it will default to randomizing all of the properties.
+
+```
+parameters: {
+    cssChaos: {
+        maxVariance: 5
+    }
+};
+```
+
+* Setting the max variance does not mean that there will be that number of non-default values. Each property is set to a random value which may equal the default.
 
 ## Development scripts
 
