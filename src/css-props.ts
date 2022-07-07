@@ -347,18 +347,19 @@ export const CSS_PROPS = [
             "inherit"
         ]
     },
-    {
-        "name": "visibility",
-        "description": "Specifies whether or not an element is visible.",
-        "default": "visible",
-        "values": [
-            "visible",
-            "hidden",
-            "collapse",
-            "initial",
-            "inherit"
-        ]
-    },
+    // Seems to cause more harm than good because it hides everything you want to see to validate
+    // {
+    //     "name": "visibility",
+    //     "description": "Specifies whether or not an element is visible.",
+    //     "default": "visible",
+    //     "values": [
+    //         "visible",
+    //         "hidden",
+    //         "collapse",
+    //         "initial",
+    //         "inherit"
+    //     ]
+    // },
     {
         "name": "white-space",
         "description": "Specifies how white-space inside an element is handled.",
