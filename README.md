@@ -17,6 +17,36 @@ In your main.js file, add to the addons array:
 addons: ["css-chaos-addon"]
 ```
 
+## Supported CSS Properties
+
+The inheritied properties that are set by this addon include:
+
+- border-collapse
+- border-spacing
+- caption-side
+- color
+- cursor
+- direction
+- empty-cells
+- font-family
+- font-size
+- font-style
+- font-variant
+- font-weight
+- letter-spacing
+- line-height
+- list-style-position
+- list-style-type
+- text-align
+- text-indent
+- text-transform
+- white-space
+- word-spacing
+
+For more information about these properties, see the properties file [here](./src/css-props.ts).
+
+Some of the properties have arbitrary values that might be set by a consuming application (ex. color). If you would like to override these values with a set of your own, see the section on customizing the CSS properties.
+
 ## Customizing CSS Properties
 
 To customize, you will need to leverage Storybook's parameters feature that can be set globally or at the story level. The parameter used for the CSS Chaos Addon is called `cssPropertyData`.
