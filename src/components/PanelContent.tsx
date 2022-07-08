@@ -189,7 +189,6 @@ const setupChannelEvents = () => {
   })
 }
 
-
 export const PanelContent = () => {
   getCSSProps();
   setBaseCSS(globalCssProps)
@@ -212,7 +211,7 @@ export const PanelContent = () => {
 
             return <div style={{ marginBottom: '16px' }}>
               <h3>Name: {propName}</h3>
-              <div>Description: {propDesc}</div>
+              <h4>Description: {propDesc} (Default: {propDefaultValue})</h4>
               <div style={{ display: 'flex' }}>
                 {propOptions ?
                   <Form.Select id={propName} style={{ marginTop: '8px' }} defaultValue={propDefaultValue} onChange={formUpdated}>
