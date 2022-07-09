@@ -3,34 +3,19 @@ import { styled, themes, convert } from "@storybook/theming";
 import { Placeholder, Button, Form } from "@storybook/components";
 import { CSS_PROPS } from '../css-props';
 import { addons } from '@storybook/addons';
-import { useParameter } from "@storybook/api";
-import { PARAM_KEY } from "../constants";
 import { STORY_CHANGED, SELECT_STORY } from '@storybook/core-events';
+import * as utils from './utils/utils';
+import * as params from './utils/params';
 
 let globalCssProps: any[] = [];
 let currentCSSPropMap: Map<String, any> = new Map();
+let history: Map<String, any> = new Map();
 let maxVariance: number = null;
-
-const getIframeDoc = () => {
-  const iframe = document.querySelector<HTMLIFrameElement>(
-    "#storybook-preview-iframe"
-  );
-  return iframe && iframe.contentWindow && iframe.contentWindow.document ? iframe.contentWindow.document : null;
-}
-
-const getForm = () => {
-  return document.querySelector("form");
-}
+let showHistory = true;
+let propertyData: any[] = [];
 
 const copyCSS = () => {
-  let css = '';
-  if (currentCSSPropMap) {
-    for (const [key, value] of currentCSSPropMap as any) {
-      css += `
-      ${key}: ${value};`
-    }
-  }
-  navigator.clipboard.writeText(css);
+  utils.copyToClipboard(utils.getCurrentPropCss(currentCSSPropMap))
   const copyButton = document.getElementById('copy-button');
   if (copyButton) {
     copyButton.innerHTML = "Copied!";
@@ -40,15 +25,10 @@ const copyCSS = () => {
   }
 }
 
-const setMaxVariance = () => {
-  maxVariance = useParameter(PARAM_KEY, null) ? useParameter(PARAM_KEY, null).maxVariance : null;
-}
-
 const getCSSProps = () => {
-  const paramData: any[] = useParameter(PARAM_KEY, null) ? useParameter(PARAM_KEY, null).propertyData : [];
   const propnames: string[] = [];
-  if (paramData) {
-    for (const data of paramData) {
+  if (propertyData) {
+    for (const data of propertyData) {
       const filteredItem = CSS_PROPS.filter(obj => obj.name === data.name)[0];
       if (data.name && filteredItem) {
         if (data.values) {
@@ -63,7 +43,7 @@ const getCSSProps = () => {
         propnames.push(data.name);
       }
     }
-    const newProps = paramData.filter(obj => !propnames.includes(obj.name));
+    const newProps = propertyData.filter(obj => !propnames.includes(obj.name));
     if (newProps) {
       globalCssProps = [
         ...newProps,
@@ -76,32 +56,17 @@ const getCSSProps = () => {
 }
 
 const setBaseCSS = (cssprops: any[]) => {
-  const iframeDoc = getIframeDoc();
-  if (iframeDoc && cssprops) {
+  if (cssprops) {
     let propertyCss = ``;
     for (const prop of cssprops) {
       propertyCss += `${prop.name}: var(--sb-chaos-${prop.name});`;
     }
-    const css = `body { ${propertyCss} }`;
-    const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
-    const style: any = iframeDoc.createElement('style');
-    if (style) {
-      style.type = 'text/css';
-      if (style.styleSheet) {
-        // This is required for IE8 and below.
-        style.styleSheet.cssText = css;
-      } else {
-        style.appendChild(document.createTextNode(css));
-      }
-    }
-    if (head && style) {
-      head.appendChild(style);
-    }
+    utils.addStylesToHead(`html { ${propertyCss} }`);
   }
 }
 
 const updateCSSProps = (propObj: any) => {
-  const iframeDoc = getIframeDoc();
+  const iframeDoc = utils.getIframeDoc();
   if (iframeDoc && propObj) {
     const root = iframeDoc.documentElement;
     if (root) {
@@ -115,6 +80,7 @@ const formUpdated = (event: any) => {
   //change the existing css var for property type
   updateCSSProps({ name: event.target.id, value: event.target.value } as any);
   setPointer(event.target.id, event.target.value);
+  setHistorySelect();
 }
 
 const setPointer = (propName: string, propValue: any): any => {
@@ -123,7 +89,7 @@ const setPointer = (propName: string, propValue: any): any => {
   if (starEl) {
     starEl.remove();
   }
-  if (prop.default != propValue) {
+  if (prop && prop.default != propValue) {
     const dropdownEl = document.getElementById(propName)
     const starEl = document.createElement("span");
     starEl.id = `${propName}-star`;
@@ -136,19 +102,12 @@ const setPointer = (propName: string, propValue: any): any => {
   }
 }
 
-const shuffleArray = (arr: any[]) => {
-  return arr
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value)
-}
-
 const randomizePropValues = () => {
-  const formElement = getForm();
+  const formElement = utils.getForm();
   const varianceVal = maxVariance ? maxVariance : Array.from(formElement.elements).length;
-  let index = 0;
   resetPropValues();
-  for (let el of shuffleArray(Array.from(formElement.elements))) {
+  let index = 0;
+  for (let el of utils.shuffleArray(Array.from(formElement.elements))) {
     if (index < varianceVal) {
       const options = el.children;
       const random = Math.floor(Math.random() * options.length);
@@ -161,10 +120,11 @@ const randomizePropValues = () => {
     }
     index++;
   }
+  setHistorySelect();
 }
 
 const resetPropValues = () => {
-  const formElement = getForm();
+  const formElement = utils.getForm();
   for (const el of Array.from(formElement.elements)) {
     const propObj: any = globalCssProps.filter(obj => obj.name === el.id)[0];
     (el as any).value = propObj.default;
@@ -186,7 +146,56 @@ const setupChannelEvents = () => {
   const channel = addons.getChannel();
   channel.on(STORY_CHANGED, () => {
     resetPropValues();
+    resetHistory();
   })
+}
+
+const setHistorySelect = () => {
+  addToHistory();
+  const historySelect = document.getElementById("history-select");
+  historySelect.innerHTML = '';
+  const iterableHistoryMap = [...history].sort().reverse();
+  let index = 0
+  for (const [key, value] of iterableHistoryMap as any) {
+    const newOption = document.createElement('option');
+    if (index === 0) {
+      newOption.innerHTML = 'Current';
+      newOption.value = key;
+    } else {
+      newOption.innerHTML = `Time: ${key}`;
+      newOption.value = key;
+    }
+    historySelect.appendChild(newOption);
+    index++;
+  }
+}
+
+const addToHistory = () => {
+  history.set(utils.getCurrentTimeString(), new Map(currentCSSPropMap));
+}
+
+const resetHistory = () => {
+  const historySelect = document.getElementById("history-select");
+  historySelect.innerHTML = '';
+  const newOption = document.createElement('option');
+  newOption.innerHTML = 'Current';
+  newOption.value = null;
+  historySelect.appendChild(newOption);
+  history = new Map();
+}
+
+const setHistoricalProps = (event: any) => {
+  //change the existing css var for property type
+  const historicalPropMap = history.get(event.target.value);
+  if (historicalPropMap) {
+    const formElement = utils.getForm();
+    resetPropValues();
+    for (let el of Array.from(formElement.elements)) {
+      (el as any).value = historicalPropMap.get(el.id);
+      updateCSSProps({ name: el.id, value: historicalPropMap.get(el.id) } as any);
+      setPointer(el.id, historicalPropMap.get(el.id));
+    }
+  }
 }
 
 export const PanelContent = () => {
@@ -194,12 +203,26 @@ export const PanelContent = () => {
   setBaseCSS(globalCssProps)
   initCSSProps(globalCssProps)
   setupChannelEvents();
-  setMaxVariance();
+  maxVariance = params.getMaxVariance();
+  showHistory = params.getShowHistory();
+  propertyData = params.getPropertyData();
+
   return (
     <div style={{ margin: '16px' }}>
       <div style={{ position: 'sticky', top: 16, zIndex: 100, float: 'right' }}>
-        <Button secondary small style={{ marginRight: '8px' }} onClick={resetPropValues}>Reset</Button>
-        <Button primary small onClick={randomizePropValues}>Randomize!</Button>
+        <div>
+          <Button secondary small style={{ marginRight: '8px' }} onClick={resetPropValues}>Reset</Button>
+          <Button primary small onClick={randomizePropValues}>Randomize!</Button>
+        </div>
+        {showHistory ?
+          <div>
+            <h4 style={{ marginBottom: '-4px', fontWeight: 'bold', marginLeft: '2px', marginTop: '4px' }}>History</h4>
+            <Form.Select id="history-select" style={{ marginTop: '8px', width: "177px" }} defaultValue='Current' onChange={setHistoricalProps}>
+              <option>Current</option>
+            </Form.Select>
+          </div>
+          : null
+        }
       </div>
       <form>
         <div>

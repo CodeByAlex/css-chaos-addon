@@ -7,6 +7,7 @@ export default {
   parameters: {
     cssChaos: {
       maxVariance: 5,
+      showHistory: false,
       propertyData:
         [
           {

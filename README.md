@@ -129,6 +129,18 @@ parameters: {
 
 * Setting the max variance does not mean that there will be that number of non-default values. Each property is set to a random value which may equal the default.
 
+## Turning off History
+
+If you would to hide the history dropdown, set the history property under the cssChaos object to false. By default, this property will be set to true.
+
+```
+parameters: {
+    cssChaos: {
+        history: false
+    }
+};
+```
+
 ## Development scripts
 
 - `npm start` runs babel in watch mode and starts Storybook
