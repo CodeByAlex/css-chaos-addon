@@ -80,7 +80,9 @@ const formUpdated = (event: any) => {
   //change the existing css var for property type
   updateCSSProps({ name: event.target.id, value: event.target.value } as any);
   setPointer(event.target.id, event.target.value);
-  setHistorySelect();
+  if (showHistory) {
+    setHistorySelect();
+  }
 }
 
 const setPointer = (propName: string, propValue: any): any => {
@@ -120,7 +122,9 @@ const randomizePropValues = () => {
     }
     index++;
   }
-  setHistorySelect();
+  if (showHistory) {
+    setHistorySelect();
+  }
 }
 
 const resetPropValues = () => {
@@ -146,7 +150,9 @@ const setupChannelEvents = () => {
   const channel = addons.getChannel();
   channel.on(STORY_CHANGED, () => {
     resetPropValues();
-    resetHistory();
+    if (showHistory) {
+      resetHistory();
+    }
   })
 }
 
